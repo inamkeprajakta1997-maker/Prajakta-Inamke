@@ -17,11 +17,12 @@ import {
   ArrowLink,
   Eyebrow,
   FinalCta,
+  LiveProjectImage,
   PageIntro,
   ProjectCard,
   SectionHeading,
 } from "@/components/portfolio-ui";
-import { projects, services, socialLinks, techGroups } from "@/lib/portfolio-data";
+import { liveProjects, projects, services, socialLinks, techGroups } from "@/lib/portfolio-data";
 
 const process = [
   "Discovery",
@@ -174,7 +175,7 @@ export function HomePage() {
             text="A selection of websites and digital products shaped around clear business goals and dependable everyday use."
           />
           <div className="grid gap-x-8 gap-y-16 md:grid-cols-2">
-            {projects.slice(0, 4).map((project, index) => (
+            {[...projects.slice(0, 4), ...liveProjects].map((project, index) => (
               <ProjectCard
                 key={project.slug}
                 project={project}
@@ -480,6 +481,7 @@ export function PortfolioPage() {
                 variant={filter === category ? "default" : "outline"}
                 size="sm"
                 onClick={() => setFilter(category)}
+                aria-pressed={filter === category}
               >
                 {category}
               </Button>
@@ -518,6 +520,42 @@ export function CaseStudyPage({ slug }: { slug: string }) {
     );
   const previous = projects[(index - 1 + projects.length) % projects.length];
   const next = projects[(index + 1) % projects.length];
+  if ("liveUrl" in project) {
+    return (
+      <>
+        <PageIntro eyebrow={project.categoryLabel} title={project.name} text={project.summary} />
+        <section className="content-shell pb-24">
+          <div className="overflow-hidden rounded-[var(--radius)] bg-muted">
+            <LiveProjectImage project={project} eager />
+          </div>
+          <ul className="mt-6 flex flex-wrap gap-2" aria-label="Project categories">
+            {project.tags.map((tag) => (
+              <li
+                key={tag}
+                className="rounded-full border border-border px-3 py-1 text-sm text-muted-foreground"
+              >
+                {tag}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Button asChild>
+              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                View Live Website <ExternalLink aria-hidden="true" />
+                <span className="sr-only">(opens in a new tab)</span>
+              </a>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to="/portfolio">
+                <ArrowLeft /> Back to Portfolio
+              </Link>
+            </Button>
+          </div>
+        </section>
+        <FinalCta />
+      </>
+    );
+  }
   return (
     <>
       <section className="section-shell pb-12">

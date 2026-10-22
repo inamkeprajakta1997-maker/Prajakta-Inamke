@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Project } from "@/lib/portfolio-data";
+import type { LiveProject, Project } from "@/lib/portfolio-data";
 import { socialLinks } from "@/lib/portfolio-data";
 import { cn } from "@/lib/utils";
 
@@ -87,6 +87,48 @@ export function ProjectCard({
   featured?: boolean;
   eager?: boolean;
 }) {
+  if ("liveUrl" in project) {
+    return (
+      <article className={cn("project-card group min-w-0", featured && "md:col-span-2")}>
+        <a
+          href={project.liveUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block overflow-hidden rounded-[var(--radius)] bg-muted focus-visible:outline-2 focus-visible:outline-offset-4"
+          aria-label={`View ${project.name} live website (opens in a new tab)`}
+        >
+          <LiveProjectImage project={project} featured={featured} eager={eager} />
+        </a>
+        <div className="mt-5 border-t border-border pt-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-foreground">
+            {project.categoryLabel}
+          </p>
+          <h3 className="mt-2 font-display text-2xl text-foreground">{project.name}</h3>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{project.summary}</p>
+          <ul className="mt-4 flex flex-wrap gap-2" aria-label={`${project.name} categories`}>
+            {project.tags.map((tag) => (
+              <li
+                key={tag}
+                className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground"
+              >
+                {tag}
+              </li>
+            ))}
+          </ul>
+          <Button asChild variant="outline" className="mt-5 max-w-full">
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`View Live Website: ${project.name} (opens in a new tab)`}
+            >
+              View Live Website <ExternalLink aria-hidden="true" />
+            </a>
+          </Button>
+        </div>
+      </article>
+    );
+  }
   return (
     <article className={cn("project-card group", featured && "md:col-span-2")}>
       <Link
@@ -126,6 +168,31 @@ export function ProjectCard({
         </Link>
       </div>
     </article>
+  );
+}
+
+export function LiveProjectImage({
+  project,
+  featured = false,
+  eager = false,
+}: {
+  project: LiveProject;
+  featured?: boolean;
+  eager?: boolean;
+}) {
+  return (
+    <img
+      src={project.image}
+      alt={project.imageAlt}
+      width={1440}
+      height={960}
+      loading={eager ? "eager" : "lazy"}
+      decoding="async"
+      className={cn(
+        "aspect-[3/2] w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.025] motion-reduce:transform-none motion-reduce:transition-none",
+        featured && "md:aspect-[2/1]",
+      )}
+    />
   );
 }
 

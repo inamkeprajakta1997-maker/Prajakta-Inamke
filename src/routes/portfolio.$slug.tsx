@@ -5,7 +5,7 @@ export const Route = createFileRoute("/portfolio/$slug")({
   head: ({ params }) => {
     const p = projects.find((x) => x.slug === params.slug);
     const title = p
-      ? `${p.name} Case Study — Prajakta Inamke`
+      ? `${p.name} ${"liveUrl" in p ? "Project" : "Case Study"} — Prajakta Inamke`
       : "Project Not Found — Prajakta Inamke";
     const description = p?.summary ?? "The requested portfolio case study could not be found.";
     return {

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useMatch } from "@tanstack/react-router";
 import { PortfolioPage } from "@/components/pages";
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
@@ -19,5 +19,10 @@ export const Route = createFileRoute("/portfolio")({
     ],
     links: [{ rel: "canonical", href: "/portfolio" }],
   }),
-  component: PortfolioPage,
+  component: PortfolioRoute,
 });
+
+function PortfolioRoute() {
+  const projectMatch = useMatch({ from: "/portfolio/$slug", shouldThrow: false });
+  return projectMatch ? <Outlet /> : <PortfolioPage />;
+}

@@ -2,25 +2,92 @@ import atelierImage from "@/assets/project-atelier.jpg";
 import northstarImage from "@/assets/project-northstar.jpg";
 import fleetImage from "@/assets/project-fleet.jpg";
 import wellnessImage from "@/assets/project-wellness.jpg";
+import sairajImage from "@/assets/project-sairaj.jpg";
+import keshavImage from "@/assets/project-keshav.jpg";
+import oxyalphaImage from "@/assets/project-oxyalpha.jpg";
+import d2dImage from "@/assets/project-d2d.jpg";
 
 export type ProjectCategory =
   "Business Websites" | "E-commerce" | "Web Applications" | "Portals" | "Dashboards";
 
-export type Project = {
+type ProjectBase = {
   slug: string;
   name: string;
-  client: string;
-  industry: string;
   category: ProjectCategory;
-  tech: string[];
   summary: string;
   image: string;
+};
+
+export type LiveProject = ProjectBase & {
+  liveUrl: string;
+  categoryLabel: string;
+  tags: string[];
+  imageAlt: string;
+};
+
+export type CaseStudyProject = ProjectBase & {
+  client: string;
+  industry: string;
+  tech: string[];
   challenge: string;
   approach: string;
   solution: string;
   features: string[];
   outcome: string;
 };
+
+export type Project = CaseStudyProject | LiveProject;
+
+export const liveProjects: LiveProject[] = [
+  {
+    slug: "sairaj-groups",
+    name: "Sairaj Groups",
+    category: "Business Websites",
+    categoryLabel: "Corporate Website",
+    tags: ["Logistics", "Industrial Services"],
+    summary:
+      "A corporate website presenting logistics, warehousing and manpower services, with company information and enquiry options.",
+    image: sairajImage,
+    imageAlt: "Sairaj Groups homepage featuring its logistics and transport services",
+    liveUrl: "https://sairajgroups.in/",
+  },
+  {
+    slug: "keshav-tours-travels",
+    name: "Keshav Tours & Travels",
+    category: "Business Websites",
+    categoryLabel: "Travel & Car Rental Website",
+    tags: ["Travel", "Car Rental"],
+    summary:
+      "A travel and car rental website introducing Keshav Tours & Travels and its taxi and tour services in Pune.",
+    image: keshavImage,
+    imageAlt: "Keshav Tours and Travels homepage showcasing its travel and car rental services",
+    liveUrl: "https://keshavtoursandtravels.com/",
+  },
+  {
+    slug: "oxyalpha",
+    name: "Oxyalpha",
+    category: "Business Websites",
+    categoryLabel: "Business Website",
+    tags: ["Packaged Drinking Water", "Solapur"],
+    summary:
+      "A business website introducing Oxyalpha's packaged drinking water offering in Solapur and helping visitors learn about the brand.",
+    image: oxyalphaImage,
+    imageAlt: "Oxyalpha homepage presenting its packaged drinking water brand",
+    liveUrl: "https://www.oxyalpha.com/",
+  },
+  {
+    slug: "d2d-animation-institute",
+    name: "D2D Animation Institute",
+    category: "Business Websites",
+    categoryLabel: "Education & Training Website",
+    tags: ["Education", "Animation Training"],
+    summary:
+      "An education and training website introducing D2D Animation Institute to prospective students on Digital Class World.",
+    image: d2dImage,
+    imageAlt: "D2D Animation Institute's education and training page on Digital Class World",
+    liveUrl: "https://partner.digitalclassworld.com/d2d-animation-institute",
+  },
+];
 
 export const projects: Project[] = [
   {
@@ -178,6 +245,7 @@ export const projects: Project[] = [
     outcome:
       "More consistent product data and less time spent reconciling routine operational changes.",
   },
+  ...liveProjects,
 ];
 
 export const services = [
