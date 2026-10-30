@@ -1,6 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { AboutPage } from "@/components/pages";
 export const Route = createFileRoute("/about")({
+  beforeLoad: () => {
+    throw redirect({ to: "/", hash: "about" });
+  },
   head: () => ({
     meta: [
       { title: "About Prajakta Inamke — Web Developer" },

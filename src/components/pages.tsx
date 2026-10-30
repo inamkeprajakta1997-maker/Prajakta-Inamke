@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link, useSearch } from "@tanstack/react-router";
 import {
   ArrowLeft,
@@ -8,6 +8,13 @@ import {
   ChevronRight,
   CircleCheck,
   ExternalLink,
+  Phone,
+  Mail,
+  Lightbulb,
+  PenTool,
+  Code2,
+  Rocket,
+  HeartHandshake,
 } from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -61,7 +68,10 @@ export function HomePage() {
   const [testimonial, setTestimonial] = useState(0);
   return (
     <>
-      <section className="section-shell overflow-hidden pb-14 pt-16 md:pb-24 md:pt-24">
+      <section
+        id="home"
+        className="scroll-section section-shell overflow-hidden pb-14 pt-16 md:pb-24 md:pt-24"
+      >
         <div className="content-shell grid items-center gap-14 lg:grid-cols-[1.02fr_.98fr]">
           <div>
             <div className="mb-7 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -77,12 +87,14 @@ export function HomePage() {
             </p>
             <div className="mobile-cta-row mt-9 flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <Link to="/portfolio">
+                <Link to="/" hash="portfolio">
                   View My Work <ArrowRight />
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link to="/contact">Start a Project</Link>
+                <Link to="/" hash="contact">
+                  Start a Project
+                </Link>
               </Button>
             </div>
             <p className="mt-9 text-xs font-medium text-muted-foreground">
@@ -94,27 +106,19 @@ export function HomePage() {
             </p>
           </div>
           <div className="hero-composition">
-            <div className="browser-frame">
-              <div className="browser-bar">
-                <i />
-                <i />
-                <i />
-              </div>
+            <div className="hero-portrait">
               <img
-                src={projects[0].image}
-                alt="Selected e-commerce website work"
-                width={1200}
-                height={800}
+                src="/profile-photo-clean.png"
+                alt="Prajakta Inamke, web developer"
+                width={1071}
+                height={1468}
+                fetchPriority="high"
               />
             </div>
             <div className="hero-detail">
-              <span>Selected project</span>
-              <strong>{projects[0].name}</strong>
-              <Link
-                to="/portfolio/$slug"
-                params={{ slug: projects[0].slug }}
-                aria-label="View Atelier Living case study"
-              >
+              <span>Web Developer</span>
+              <strong>Prajakta Inamke</strong>
+              <Link to="/" hash="about" aria-label="About Prajakta Inamke">
                 <ArrowRight />
               </Link>
             </div>
@@ -136,7 +140,29 @@ export function HomePage() {
       </section>
       <section className="section-shell">
         <div className="content-shell grid gap-10 md:grid-cols-[.7fr_1.3fr]">
-          <Eyebrow>How I work</Eyebrow>
+          <div>
+            <Eyebrow>How I work</Eyebrow>
+            <ol className="mt-8 max-w-sm border-t border-border">
+              {[
+                ["Plan", "Understand your goals and shape a clear direction."],
+                ["Build", "Bring design and functionality together with care."],
+                ["Support", "Keep improving after your website goes live."],
+              ].map(([title, description], index) => (
+                <li key={title} className="flex gap-4 border-b border-border py-4">
+                  <span
+                    className="pt-1 text-xs font-medium text-muted-foreground"
+                    aria-hidden="true"
+                  >
+                    0{index + 1}
+                  </span>
+                  <div>
+                    <h3 className="font-display text-xl">{title}</h3>
+                    <p className="mt-1 text-sm leading-6 text-muted-foreground">{description}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
           <div>
             <h2 className="section-title">Development that goes beyond good-looking websites.</h2>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
@@ -150,43 +176,14 @@ export function HomePage() {
           </div>
         </div>
       </section>
-      <section className="section-shell bg-surface-strong">
-        <div className="content-shell">
-          <SectionHeading eyebrow="Services" title="What I Can Build For You" />
-          <div className="grid border-t border-border md:grid-cols-2">
-            {services.slice(0, 4).map((service) => (
-              <div key={service.id} className="service-preview">
-                <span>{service.number}</span>
-                <h3>{service.shortTitle}</h3>
-                <p>{service.overview}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-10">
-            <ArrowLink to="/services">Explore All Services</ArrowLink>
-          </div>
-        </div>
+      <section id="about" className="scroll-section" aria-label="About Prajakta">
+        <AboutPage embedded />
       </section>
-      <section className="section-shell">
-        <div className="content-shell">
-          <SectionHeading
-            eyebrow="Portfolio"
-            title="Selected Work"
-            text="A selection of websites and digital products shaped around clear business goals and dependable everyday use."
-          />
-          <div className="grid gap-x-8 gap-y-16 md:grid-cols-2">
-            {[...projects.slice(0, 4), ...liveProjects].map((project, index) => (
-              <ProjectCard
-                key={project.slug}
-                project={project}
-                featured={index === 0 || index === 3}
-              />
-            ))}
-          </div>
-          <div className="mt-12">
-            <ArrowLink to="/portfolio">View All Projects</ArrowLink>
-          </div>
-        </div>
+      <section id="services" className="scroll-section" aria-label="Services">
+        <ServicesPage embedded />
+      </section>
+      <section id="portfolio" className="scroll-section" aria-label="Live website projects">
+        <PortfolioPage embedded />
       </section>
       <section className="section-shell border-y border-border bg-surface-strong">
         <div className="content-shell">
@@ -275,30 +272,48 @@ export function HomePage() {
           </div>
         </div>
       </section>
-      <FinalCta />
+      <section id="experience" className="scroll-section" aria-label="Experience">
+        <ExperiencePage embedded />
+      </section>
+      <section id="contact" className="scroll-section" aria-label="Contact">
+        <ContactPage embedded />
+      </section>
     </>
   );
 }
 
-export function AboutPage() {
+export function AboutPage({ embedded = false }: { embedded?: boolean }) {
   return (
     <>
       <PageIntro
+        embedded={embedded}
         eyebrow="About Prajakta"
         title="Building digital solutions with equal focus on design, technology and business."
         text="I bring the clarity of a consultant and the practical ownership of a developer to every engagement."
       />
       <section className="section-shell pt-0">
         <div className="content-shell grid gap-12 lg:grid-cols-[.8fr_1.2fr]">
-          <figure className="portrait-photo">
-            <img
-              src="/profile-photo-clean.png"
-              alt="Prajakta Inamke, web developer and web solutions specialist"
-              width="1072"
-              height="1472"
-              loading="eager"
-            />
-          </figure>
+          <aside className="journey-card" aria-labelledby="journey-title">
+            <Eyebrow>My Process</Eyebrow>
+            <h2 id="journey-title">From a spark<br />to something real.</h2>
+            <p className="journey-intro">One clear process. Care at every step.</p>
+            <ol className="journey-steps">
+              {[
+                { title: "Idea", text: "Understand your goals and find the right direction.", icon: Lightbulb },
+                { title: "Design", text: "Shape a thoughtful, easy-to-use experience.", icon: PenTool },
+                { title: "Development", text: "Build with clean code and attention to detail.", icon: Code2 },
+                { title: "Launch", text: "Test, polish and bring your website to life.", icon: Rocket },
+                { title: "Support", text: "Keep things running and growing with you.", icon: HeartHandshake },
+              ].map(({ title, text, icon: Icon }, index) => (
+                <li key={title}>
+                  <span className="journey-icon"><Icon size={21} strokeWidth={1.5} aria-hidden="true" /></span>
+                  <div><h3>{title}</h3><p>{text}</p></div>
+                  <span className="journey-number" aria-hidden="true">0{index + 1}</span>
+                </li>
+              ))}
+            </ol>
+            <div className="journey-footer"><span />Your vision, thoughtfully delivered.</div>
+          </aside>
           <div className="space-y-14">
             <div>
               <Eyebrow>My Story</Eyebrow>
@@ -398,15 +413,16 @@ export function AboutPage() {
           </div>
         </div>
       </section>
-      <FinalCta />
+      {!embedded && <FinalCta />}
     </>
   );
 }
 
-export function ServicesPage() {
+export function ServicesPage({ embedded = false }: { embedded?: boolean }) {
   return (
     <>
       <PageIntro
+        embedded={embedded}
         eyebrow="Services"
         title="Web solutions built around your business."
         text="From a focused company website to a custom operational platform, each engagement starts with what the product needs to achieve."
@@ -438,7 +454,7 @@ export function ServicesPage() {
                     ))}
                   </ul>
                   <Button asChild variant="outline">
-                    <Link to="/contact" search={{ service: service.shortTitle }}>
+                    <Link to="/" hash="contact" search={{ service: service.shortTitle }}>
                       Discuss This Project <ArrowRight />
                     </Link>
                   </Button>
@@ -448,53 +464,30 @@ export function ServicesPage() {
           ))}
         </div>
       </section>
-      <FinalCta />
+      {!embedded && <FinalCta />}
     </>
   );
 }
 
-const categories = [
-  "All",
-  "Business Websites",
-  "E-commerce",
-  "Web Applications",
-  "Portals",
-  "Dashboards",
-] as const;
-export function PortfolioPage() {
-  const [filter, setFilter] = useState<(typeof categories)[number]>("All");
-  const visible =
-    filter === "All" ? projects : projects.filter((project) => project.category === filter);
+export function PortfolioPage({ embedded = false }: { embedded?: boolean }) {
   return (
     <>
       <PageIntro
+        embedded={embedded}
         eyebrow="Portfolio"
-        title="Selected digital work, built for real use."
-        text="Explore business websites, commerce experiences, portals and operational tools—each shaped around a clear practical outcome."
+        title="Live Website Projects"
+        text="Explore my live website projects across corporate services, travel, business and education."
       />
       <section className="pb-24">
         <div className="content-shell">
-          <div className="filter-row mb-12 flex gap-2" role="group" aria-label="Filter projects">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={filter === category ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilter(category)}
-                aria-pressed={filter === category}
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
           <div className="grid gap-x-8 gap-y-16 md:grid-cols-2">
-            {visible.map((project, index) => (
-              <ProjectCard key={project.slug} project={project} featured={index % 3 === 0} />
+            {liveProjects.map((project) => (
+              <ProjectCard key={project.slug} project={project} />
             ))}
           </div>
         </div>
       </section>
-      <FinalCta />
+      {!embedded && <FinalCta />}
     </>
   );
 }
@@ -510,7 +503,7 @@ export function CaseStudyPage({ slug }: { slug: string }) {
           <h1 className="display-title">This case study isn’t available.</h1>
           <div className="mt-8">
             <Button asChild>
-              <Link to="/portfolio">
+              <Link to="/" hash="portfolio">
                 <ArrowLeft /> Back to Portfolio
               </Link>
             </Button>
@@ -546,7 +539,7 @@ export function CaseStudyPage({ slug }: { slug: string }) {
               </a>
             </Button>
             <Button asChild variant="outline">
-              <Link to="/portfolio">
+              <Link to="/" hash="portfolio">
                 <ArrowLeft /> Back to Portfolio
               </Link>
             </Button>
@@ -561,7 +554,8 @@ export function CaseStudyPage({ slug }: { slug: string }) {
       <section className="section-shell pb-12">
         <div className="content-shell">
           <Link
-            to="/portfolio"
+            to="/"
+            hash="portfolio"
             className="mb-10 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft /> Portfolio
@@ -667,7 +661,7 @@ export function CaseStudyPage({ slug }: { slug: string }) {
   );
 }
 
-export function ExperiencePage() {
+export function ExperiencePage({ embedded = false }: { embedded?: boolean }) {
   const capabilities = [
     "Requirement gathering",
     "Project planning",
@@ -681,6 +675,7 @@ export function ExperiencePage() {
   return (
     <>
       <PageIntro
+        embedded={embedded}
         eyebrow="Experience"
         title="Experience built through real projects."
         text="Practical delivery experience across development, leadership, project coordination and the client conversations that keep work moving."
@@ -745,7 +740,7 @@ export function ExperiencePage() {
           </div>
         </div>
       </section>
-      <FinalCta />
+      {!embedded && <FinalCta />}
     </>
   );
 }
@@ -760,8 +755,8 @@ const enquirySchema = z.object({
   timeline: z.string().trim().min(2, "Add your preferred timeline").max(100),
   description: z.string().trim().min(20, "Please share at least 20 characters").max(2000),
 });
-export function ContactPage() {
-  const search = useSearch({ from: "/contact" });
+export function ContactPage({ embedded = false }: { embedded?: boolean }) {
+  const search = useSearch({ strict: false });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
   function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -783,6 +778,7 @@ export function ContactPage() {
   return (
     <>
       <PageIntro
+        embedded={embedded}
         eyebrow="Project enquiry"
         title="Let’s build something useful."
         text="Tell me a little about your project and I’ll get back to you."
@@ -796,6 +792,23 @@ export function ContactPage() {
               don’t need a finished technical brief.
             </p>
             <div className="mt-10 border-t border-border pt-6">
+              <p className="text-sm text-muted-foreground">Call me</p>
+              <a
+                className="mt-3 inline-flex min-h-11 items-center gap-2 font-semibold transition-colors hover:text-muted-foreground"
+                href="tel:+919370436692"
+              >
+                <Phone className="size-4" aria-hidden="true" /> +91 93704 36692
+              </a>
+              <p className="mt-5 text-sm text-muted-foreground">Email me</p>
+              <a
+                className="mt-3 inline-flex min-h-11 max-w-full items-center gap-2 font-semibold transition-colors hover:text-muted-foreground"
+                href="mailto:inamkeprajakta1997@gmail.com"
+              >
+                <Mail className="size-4 shrink-0" aria-hidden="true" />
+                <span className="break-all">inamkeprajakta1997@gmail.com</span>
+              </a>
+            </div>
+            <div className="mt-6 border-t border-border pt-6">
               <p className="text-sm text-muted-foreground">Prefer LinkedIn?</p>
               <a
                 className="mt-3 inline-flex items-center gap-2 font-semibold"
@@ -830,6 +843,7 @@ export function ContactPage() {
                 <Field label="Phone Number" name="phone" type="tel" error={errors.phone} />
               </div>
               <SelectField
+                key={typeof search.service === "string" ? search.service : "default-service"}
                 label="What do you need?"
                 name="service"
                 defaultValue={typeof search.service === "string" ? search.service : ""}

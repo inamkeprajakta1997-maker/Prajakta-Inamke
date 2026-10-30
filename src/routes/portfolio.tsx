@@ -1,6 +1,11 @@
-import { createFileRoute, Outlet, useMatch } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useMatch, redirect } from "@tanstack/react-router";
 import { PortfolioPage } from "@/components/pages";
 export const Route = createFileRoute("/portfolio")({
+  beforeLoad: ({ location }) => {
+    if (location.pathname.replace(/\/$/, "") === "/portfolio") {
+      throw redirect({ to: "/", hash: "portfolio" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Web Development Portfolio — Prajakta Inamke" },

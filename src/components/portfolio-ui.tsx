@@ -17,16 +17,21 @@ export function PageIntro({
   eyebrow,
   title,
   text,
+  embedded = false,
 }: {
   eyebrow: string;
   title: string;
   text: string;
+  embedded?: boolean;
 }) {
+  const Heading = embedded ? "h2" : "h1";
   return (
     <header className="page-intro section-shell">
       <div className="content-shell">
         <Eyebrow>{eyebrow}</Eyebrow>
-        <h1 className="display-title max-w-5xl">{title}</h1>
+        <Heading className={cn(embedded ? "section-title" : "display-title", "max-w-5xl")}>
+          {title}
+        </Heading>
         <p className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground">{text}</p>
       </div>
     </header>
@@ -68,7 +73,8 @@ export function ArrowLink({
 }) {
   return (
     <Link
-      to={to}
+      to="/"
+      hash={to.slice(1)}
       search={search as never}
       className="group inline-flex items-center gap-2 border-b border-foreground/30 pb-1 text-sm font-semibold text-foreground transition-colors hover:border-accent hover:text-accent-foreground"
     >
@@ -213,7 +219,7 @@ export function FinalCta() {
           </p>
           <div className="mobile-cta-row mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg" variant="secondary">
-              <Link to="/contact">
+              <Link to="/" hash="contact">
                 Start a Project <ArrowRight />
               </Link>
             </Button>

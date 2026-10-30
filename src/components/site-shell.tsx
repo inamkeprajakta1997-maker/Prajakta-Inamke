@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,30 @@ const nav = [
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const pathname = useLocation({ select: (location) => location.pathname });
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      const sections = ["home", "about", "services", "portfolio", "experience", "contact"];
+      let current = "home";
+      for (const id of sections) {
+        const section = document.getElementById(id);
+        if (section && section.getBoundingClientRect().top <= 120) current = id;
+      }
+      setActiveSection(current);
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [pathname]);
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -25,27 +49,31 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen overflow-x-clip bg-background text-foreground">
       <header className="sticky top-0 z-50 border-b border-border/80 bg-background/95 backdrop-blur">
         <div className="content-shell flex h-20 items-center justify-between">
-          <Link to="/" className="flex items-center gap-3" aria-label="Prajakta Inamke home">
+          <Link
+            to="/"
+            hash="home"
+            className="flex items-center gap-3"
+            aria-label="Prajakta Inamke home"
+          >
             <span className="brand-logo brand-logo-header" aria-hidden="true">
               <img src="/logo-transparent.png" alt="" width="1254" height="1254" />
             </span>
           </Link>
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary navigation">
             {nav.map(([label, to]) => (
-              <Link
+              <a
                 key={to}
-                to={to}
-                activeOptions={{ exact: to === "/" }}
-                className="nav-link"
-                activeProps={{ className: "nav-link-active" }}
+                href={`${pathname === "/" ? "" : "/"}#${to.slice(1) || "home"}`}
+                className={`nav-link ${activeSection === (to.slice(1) || "home") ? "nav-link-active" : ""}`}
+                aria-current={activeSection === (to.slice(1) || "home") ? "location" : undefined}
               >
                 {label}
-              </Link>
+              </a>
             ))}
           </nav>
           <div className="hidden lg:block">
             <Button asChild>
-              <Link to="/contact">
+              <Link to="/" hash="contact">
                 Start a Project <ArrowUpRight />
               </Link>
             </Button>
@@ -67,18 +95,19 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
               aria-label="Mobile navigation"
             >
               {nav.map(([label, to], index) => (
-                <Link
+                <a
                   key={to}
-                  to={to}
+                  href={`${pathname === "/" ? "" : "/"}#${to.slice(1) || "home"}`}
                   onClick={() => setOpen(false)}
+                  aria-current={activeSection === (to.slice(1) || "home") ? "location" : undefined}
                   className="border-b border-border py-4 font-display text-3xl"
                   style={{ animationDelay: `${index * 45}ms` }}
                 >
                   {label}
-                </Link>
+                </a>
               ))}
               <Button asChild size="lg" className="mt-7">
-                <Link to="/contact" onClick={() => setOpen(false)}>
+                <Link to="/" hash="contact" onClick={() => setOpen(false)}>
                   Start a Project <ArrowUpRight />
                 </Link>
               </Button>
@@ -90,15 +119,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <footer className="border-t border-border bg-surface-strong py-12 md:py-16">
         <div className="content-shell grid gap-10 md:grid-cols-[1.2fr_1fr_1fr]">
           <div>
-            <Link to="/" className="footer-brand" aria-label="Prajakta Inamke home">
+            <Link to="/" hash="home" className="footer-brand" aria-label="Prajakta Inamke home">
               <span className="brand-logo brand-logo-footer" aria-hidden="true">
-                <img
-                  src="/logo-transparent.png"
-                  alt=""
-                  width="1254"
-                  height="1254"
-                  loading="lazy"
-                />
+                <img src="/logo-transparent.png" alt="" width="1254" height="1254" loading="lazy" />
               </span>
               <span className="font-display text-2xl">Prajakta Inamke</span>
             </Link>
@@ -116,7 +139,8 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
               {nav.slice(1).map(([label, to]) => (
                 <Link
                   key={to}
-                  to={to}
+                  to="/"
+                  hash={to.slice(1) || "home"}
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   {label}

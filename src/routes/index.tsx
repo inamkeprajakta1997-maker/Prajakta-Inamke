@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { HomePage } from "@/components/pages";
+import { z } from "zod";
 
 export const Route = createFileRoute("/")({
+  validateSearch: z.object({ service: z.string().max(100).optional() }),
   head: () => ({
     meta: [
       { title: "Prajakta Inamke — Freelance Web Developer" },

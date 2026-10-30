@@ -1,6 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { ServicesPage } from "@/components/pages";
 export const Route = createFileRoute("/services")({
+  beforeLoad: () => {
+    throw redirect({ to: "/", hash: "services" });
+  },
   head: () => ({
     meta: [
       { title: "Website Development Services — Prajakta Inamke" },

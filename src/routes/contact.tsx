@@ -1,7 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 import { ContactPage } from "@/components/pages";
 export const Route = createFileRoute("/contact")({
+  beforeLoad: ({ search }) => {
+    throw redirect({ to: "/", hash: "contact", search });
+  },
   validateSearch: z.object({ service: z.string().max(100).optional() }),
   head: () => ({
     meta: [
